@@ -1,0 +1,47 @@
+A = readmatrix("matrix_a.csv");
+B = readmatrix("matrix_b.csv");
+C = readmatrix("matrix_c.csv");
+
+tA = readtable("matrix_a.csv");
+tB = readtable("matrix_b.csv");
+tC = readtable("matrix_c.csv");
+
+function [cleaned] = clean_input(m)
+    m(:, 1) = [];
+    sz = size(m, 1);
+    m(1:sz+1:end) = 0;
+    cleaned = m;
+end
+
+A = clean_input(A);
+
+%disp("total energy for time period 1")
+disp("ranks for matrix A")
+ranks = rank(A);
+[energy, p_val] = energy_test(A, ranks, 1000)
+disp("Energy per edge Matrix A:")
+energy
+
+
+%  [XSorted, Ind] = sort(ranks, 'descend');
+%ASorted = A(Ind, Ind);
+%A_names = tableA.Properties.VariableNames(:, 1)
+%A_names(:, 1) = []
+%reordered_names_A = A_names(Ind);
+%T_sorted = array2table(ASorted);
+%T_sorted.Properties.VariableNames = reordered_names_A;
+%T_sorted
+%writetable(T_sorted, "matrix_a_sorted.csv")
+
+
+
+%disp("total energy for time period 2")
+%B = clean_input(B)
+%ranks = springRank(B);
+%get_tot_energy(ranks, B)
+
+
+%disp("total energy for time period 3")
+%C = clean_input(C)
+%ranks = springRank(C);
+%get_tot_energy(ranks, C)
