@@ -1,0 +1,59 @@
+
+
+
+
+```{r setup}
+library(igraph)
+library(arcdiagram)
+
+A <- as.matrix(read.csv("./matrix_a_sorted.csv"))
+
+A <- A[, -1]
+View(A)
+B <- read.csv("./matrix_b.csv")
+C <- read.csv("./matrix_c.csv")
+
+```
+
+```{r convert-to-matrix}
+#remove na values, convert to matrix form
+convert_to_mat <- function(df){
+  #df <- df[, -1]
+  df[is.na(df)] <- 0
+  #rownames(df) = colnames(df)
+
+  return(df)
+}
+
+```
+
+
+```{r}
+set.seed(13)
+
+network <- graph_from_adjacency_matrix(convert_to_mat(A), mode = "directed", weighted = TRUE)
+
+layout <- layout_as_tree(network, root = 10)
+#weight_range <- max(E(network)$weight) - min(E(network)$weight)
+weight_factor = max(E(network)$weight) / 0.8
+transp <- (0.2 + E(network)$weight / weight_factor)
+plot(network,
+     layout = layout,
+     vertex.label.cex = 0.4,
+     vertex.size = 20,
+     edge.width = E(network)$weight / 10,
+     edge.arrow.size = 0.3,
+    edge.color = rgb(0.3, 0.3, 0.3, transp))
+```
+
+
+```{r diagram}
+uw_network <- network <- graph_from_adjacency_matrix(convert_to_mat(A), mode = "directed", weighted = F)
+edges <- get.edgelist(network)
+View(edges)
+
+#op <- par(mar = c(1, 0.5, 0.5, 0.5))
+arcplot(edges, las=1)
+
+
+```

@@ -1,0 +1,28 @@
+{
+    "id": "E4FBDD92",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1776521441801.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "id": "de2e312f42ac439c86216c6a9bd812d2",
+        "name": "E(network)$weight",
+        "title": "E(network)$weight",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 0,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1776521441801,
+    "read_only": false,
+    "read_only_alternatives": []
+}

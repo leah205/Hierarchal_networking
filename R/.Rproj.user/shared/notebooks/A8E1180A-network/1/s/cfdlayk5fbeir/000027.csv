@@ -1,0 +1,6 @@
+"0","uw_network <- network <- graph_from_adjacency_matrix(convert_to_mat(A), mode = ""directed"", weighted = F)"
+"0","edges <- get.edgelist(network)"
+"0","View(edges)"
+"0",""
+"0","#op <- par(mar = c(1, 0.5, 0.5, 0.5))"
+"0","arcplot(edges, las=1)"
