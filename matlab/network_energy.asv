@@ -1,10 +1,10 @@
-A = readmatrix("matrix_a.csv");
-B = readmatrix("matrix_b.csv");
-C = readmatrix("matrix_c.csv");
+A = readmatrix("../data/matrix_a.csv");
+B = readmatrix("../data/matrix_b.csv");
+C = readmatrix("../data/matrix_c.csv");
 
-tA = readtable("matrix_a.csv");
-tB = readtable("matrix_b.csv");
-tC = readtable("matrix_c.csv");
+tA = readtable("../data/matrix_a.csv");
+tB = readtable("../data/matrix_b.csv");
+tC = readtable("../data/matrix_c.csv");
 
 function [cleaned] = clean_input(m)
     m(:, 1) = [];
@@ -13,25 +13,60 @@ function [cleaned] = clean_input(m)
     cleaned = m;
 end
 
+function [table, ranks] = convert_to_table(sorted_m, indices, prev_table, ranks)
+    names = prev_table.Properties.VariableNames
+    names(:, 1) = []
+    reordered_names = names(indices)
+    T_sorted = array2table(sorted_m);
+    T_sorted.Properties.VariableNames = reordered_names;
+    T_sorted = addvars(T_sorted, reordered_names', 'Before', 1)
+
+    ranks = array2table(ranks)
+    size(ran)
+    ranks = addVars(ranks, reordered_names', 'Before', 1)
+    table = T_sorted
+end
+
+
+
 A = clean_input(A);
+B = clean_input(B);
+C = clean_input(C);
 
 %disp("total energy for time period 1")
-disp("ranks for matrix A")
-ranks = rank(A);
-[energy, p_val] = energy_test(A, ranks, 1000)
-disp("Energy per edge Matrix A:")
-energy
+%disp("ranks for matrix A")
+%ranks = rank(A);
+%[energy, p_val] = energy_test(A, ranks, 1000)
+%disp("Energy per edge Matrix A:")
 
 
-%  [XSorted, Ind] = sort(ranks, 'descend');
-%ASorted = A(Ind, Ind);
-%A_names = tableA.Properties.VariableNames(:, 1)
-%A_names(:, 1) = []
-%reordered_names_A = A_names(Ind);
-%T_sorted = array2table(ASorted);
-%T_sorted.Properties.VariableNames = reordered_names_A;
+ranksA = rank(A)
+[rCSorted, Ind] = sort(ranksA, 'descend');
+ASorted = A(Ind, Ind);
+[new_table_A, new_ranks_A] = convert_to_table(ASorted, Ind, tA, rASorted)
+
+ranksB = rank(B)
+[rBSorted, Ind] = sort(ranksB, 'descend');
+BSorted = B(Ind, Ind);
+[new_table_B, new_ranks_B] = convert_to_table(BSorted, Ind, tB, rBSorted)
+
+ranksC = rank(C)
+[rCSorted, Ind] = sort(ranksC, 'descend');
+CSorted = C(Ind, Ind);
+[new_table_C, new_ranks_C] = convert_to_table(CSorted, Ind, tC, rCSorted)
+
+
+
+
 %T_sorted
-%writetable(T_sorted, "matrix_a_sorted.csv")
+writetable(new_table_A, "../data/matrix_a_sorted.csv")
+writematrix(rASorted, "../data/ranks_a.csv")
+
+writetable(new_table_B, "../data/matrix_b_sorted.csv")
+writematrix(rBSorted, "../data/ranks_b.csv")
+
+writetable(new_table_C, "../data/matrix_c_sorted.csv")
+writematrix(rCSorted, "../data/ranks_c.csv")
 
 
 
