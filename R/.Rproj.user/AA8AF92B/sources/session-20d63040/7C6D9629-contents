@@ -1,42 +1,68 @@
 
 
+```{r libraries}
+devtools::install_github("davidsjoberg/ggbump")
 
-
-```{r setup}
+library(tidyverse)
+library(ggbump)
 library(igraph)
 library(arcdiagram)
+```
+
+```{r setup}
+
 
 A <- as.matrix(read.csv("../data/matrix_a_sorted.csv"))
-ranks <- read.csv("../data/ranks_a.csv", header = F)
-View(ranks)
+B <- as.matrix(read.csv("../data/matrix_b_sorted.csv"))
+C <- as.matrix(read.csv("../data/matrix_c_sorted.csv"))
 
-A <- A[, -1]
-View(A)
+ranksA <- read.csv("../data/ranks_a.csv")
+ranksB <- read.csv("../data/ranks_b.csv")
+ranksC <- read.csv("../data/ranks_c.csv")
+
+```
+
+```{r bump-chart}
+
+#A_merged = merge(A, ranksA, by = "Var1")
+ranksA$time_period = 1
+ranksB$time_period = 2
+ranksC$time_period = 3
+
+
+all_ranks = rbind(ranksA, ranksB, ranksC)
+View(all_ranks)
 
 
 ```
 
+
 ```{r convert-to-matrix}
 #remove na values, convert to matrix form
-convert_to_mat <- function(df){
-  #df <- df[, -1]
-  df[is.na(df)] <- 0
-  #rownames(df) = colnames(df)
-
-  return(df)
-}
+# convert_to_mat <- function(df){
+#   #df <- df[, -1]
+#   df[is.na(df)] <- 0
+#   #rownames(df) = colnames(df)
+# 
+#   return(df)
+# }
 
 ```
 
 
 ```{r}
-set.seed(13)
 
+A <- A[, -1]
+B <- B[, -1]
+C <- C[, -1]
+
+set.seed(13)
+View(ranksA)
 network <- graph_from_adjacency_matrix(convert_to_mat(A), mode = "directed", weighted = TRUE)
 
 #layout <- layout_as_tree(network, root = 10)
 layout <- layout_with_fr(network)
-rank_scaled <- scale(ranks)
+rank_scaled <- scale(ranksA[, 2])
 layout[,2] <- rank_scaled
 #weight_range <- max(E(network)$weight) - min(E(network)$weight)
 weight_factor = max(E(network)$weight) / 0.8
