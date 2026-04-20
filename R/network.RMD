@@ -126,26 +126,17 @@ weighted_edges$weight <- as.integer(weighted_edges$weight)
 
 ```{r}
 edge_mask <- which(weighted_edges$ind1 < weighted_edges$ind2)
-
 weight_factor = max(weighted_edges$weight) / 0.8
 transp <- (0.2 + weighted_edges$weight / weight_factor)
 
 edge_color <- ifelse(weighted_edges$ind1 < weighted_edges$ind2, rgb(0.75, 0.8, 1, transp), rgb(1, 0.25, 0.25, transp))
 
-arcplot(edges, las=3,font = 1, col.arcs = edge_color, 
-        above = above_below(edges, edge_mask)
+ranked_names <- rev(ranksA[[1]])
+
+arcplot(edges, las=2,font = 1, col.arcs = edge_color,
+        above = above_below(edges, edge_mask), ordering = ranked_names, horizontal = F,
+        lwd.arcs = 3, pch.nodes = 19, sorted = T, decreasing = F
         )
-
-
-```
-
-```{r diagram}
-uw_network <- network <- graph_from_adjacency_matrix(convert_to_mat(A), mode = "directed", weighted = F)
-
-View(edges)
-
-#op <- par(mar = c(1, 0.5, 0.5, 0.5))
-arcplot(edges, las=1)
 
 
 ```
