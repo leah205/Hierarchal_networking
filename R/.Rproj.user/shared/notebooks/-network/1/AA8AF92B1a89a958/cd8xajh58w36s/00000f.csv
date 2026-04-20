@@ -1,0 +1,3 @@
+"0","edge_mask <- which(weighted_edges$ind1 < weighted_edges$ind2)"
+"2","Error: object 'weighted_edges' not found
+"

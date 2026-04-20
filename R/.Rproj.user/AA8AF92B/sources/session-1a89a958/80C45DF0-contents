@@ -132,7 +132,7 @@ transp <- (0.2 + weighted_edges$weight / weight_factor)
 
 edge_color <- ifelse(weighted_edges$ind1 < weighted_edges$ind2, rgb(0.75, 0.8, 1, transp), rgb(1, 0.25, 0.25, transp))
 
-arcplot(edges, las=3,font = 1, col.arcs = edge_color, 
+arcplot(edges, las=3,font = 1, col.arcs = edge_color, horizontal = F
         above = above_below(edges, edge_mask)
         )
 
