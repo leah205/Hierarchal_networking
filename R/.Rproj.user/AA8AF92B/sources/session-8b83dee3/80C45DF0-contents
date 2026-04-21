@@ -24,8 +24,23 @@ C <- as.matrix(read.csv("../data/matrix_c_sorted.csv"))
 ranksA <- read.csv("../data/ranks_a.csv")
 ranksB <- read.csv("../data/ranks_b.csv")
 ranksC <- read.csv("../data/ranks_c.csv")
+```
+
+
+```{r demographics}
+
+demo_df <- data.frame(
+  name = c("HL", "CW", "SX", "HZ", "BH", "GS", "ZM", "BX", "TG", "TT", "HG", 
+           "YM", "ES", "YZ", "CL", "FT", "HU", "FM", "HR", "ZL", "TY", "FY", "HH"),
+  male = c(T, T, T, T, F, T, T, F, F, F, T, F, F, F, F, F, F, F, F, T, T, F, T),
+  adult = c(T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, F, F, F, F)
+)
+
+demo_df <- demo_df[match(ranksA$Var1, demo_df$name),]
+
 
 ```
+
 
 ```{r rank-table}
 create_table <- function(df){
@@ -106,11 +121,14 @@ transp <- (0.2 + E(network)$weight / weight_factor)
 plot(network,
      layout = layout,
      vertex.label.cex = 0.7,
-     vertex.size = 8,
+     vertex.size = ifelse(demo_df$adult, 12, 6),
      edge.width = E(network)$weight / 10,
      edge.arrow.size = 0.2,
+     vertex.color = ifelse(demo_df$male, "#DCDBFF", "#FFDBF6"),
     edge.color = rgb(0.3, 0.3, 0.3, transp))
 ```
+
+
 ```{r edges}
 edges <- get.edgelist(network)
 View(edges)

@@ -7,4 +7,3 @@
 "0","ranksA <- read.csv(""../data/ranks_a.csv"")"
 "0","ranksB <- read.csv(""../data/ranks_b.csv"")"
 "0","ranksC <- read.csv(""../data/ranks_c.csv"")"
-"0",""
