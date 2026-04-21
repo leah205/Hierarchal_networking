@@ -36,7 +36,10 @@ demo_df <- data.frame(
   adult = c(T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, F, F, F, F)
 )
 
-demo_df <- demo_df[match(ranksA$Var1, demo_df$name),]
+demo_dfA <- demo_df[match(ranksA$Var1, demo_df$name),]
+#demo_dfB <- demo_df[match(ranksB$Var1, demo_df$name),]
+#demo_dfB <- demo_df[match(ranksC$Var1, demo_df$name),]
+
 
 
 ```
@@ -71,20 +74,27 @@ ranksC$time_period = 3
 
 
 all_ranks = rbind(ranksA, ranksB, ranksC)
+all_ranks <- merge(all_ranks, demo_dfA, by.y = "name", by.x = "Var1")
 
-
-ggplot(all_ranks, aes(x = time_period, y = ranks, color =  Var1)) +
-
+ggplot(all_ranks, aes(x = time_period, y = ranks, group = Var1, color = male, linetype = adult)) +
     scale_x_discrete(limits = c("1", "2", "3"),
                      expand = c(0, 0)) +
 geom_bump() +
-  ggtitle("Rank Change Over Time") +
+  ggtitle("Rank Change over Three time periods") +
    theme(
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20)
   ) + theme(
-  legend.text = element_text(size = 18)
-)
+  legend.text = element_text(size = 8)
+) + scale_color_manual(
+  values = c("TRUE" = "#413BFF", "FALSE" = "#FF3BFC"),
+  labels = c("FALSE" = "Female", "TRUE" = "Male"),
+  name = "sex") +
+ scale_linetype_manual(
+   values = c("TRUE" = "solid", "FALSE" = "dashed"),
+   labels = c("FALSE" = "Subadult", "TRUE" = "Adult"),
+   name = "age"
+   )
 ```
 
 
