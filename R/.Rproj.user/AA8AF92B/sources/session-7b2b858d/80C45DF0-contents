@@ -197,6 +197,8 @@ weighted_edges$weight <- as.integer(weighted_edges$weight)
 edge_mask <- which(weighted_edges$ind1 < weighted_edges$ind2)
 weight_factor = max(weighted_edges$weight) / 0.8
 transp <- (0.2 + weighted_edges$weight / weight_factor)
+View(weighted_edges)
+edges <- as.matrix(weighted_edges[,3:4])
 
 edge_color <- ifelse(weighted_edges$ind1 < weighted_edges$ind2, rgb(0.75, 0.8, 1, transp), rgb(1, 0.25, 0.25, transp))
 
@@ -205,7 +207,11 @@ ranked_names <- rev(ranksA[[1]])
 arcplot(edges, las=2,font = 1, col.arcs = edge_color,
         above = above_below(edges, edge_mask), ordering = ranked_names, horizontal = F,
         lwd.arcs = 3, pch.nodes = 19, sorted = T, decreasing = F
-        )
+        ) 
+# legend("topright",
+#        title = "Dominate node",
+#        legend = c("Higher ranked", "Lower ranked"), col = c(rgb(0.75, 0.8, 1, 1), rgb(1, 0.25, 0.25, 1)),
+#        lwd = 3)
 
 
 ```
