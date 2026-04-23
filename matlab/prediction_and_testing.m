@@ -23,22 +23,23 @@ function [results] = cross_validate(A, n_reps, n_folds)
     results = zeros(n_reps, n_folds);
 
     % row and column subscripts of each interaction
-	% and a vector containing each interaction
+	% and a vector v containing each interaction
     [row, col, v] = find(triu(A + transpose(A)));
     fold_size = floor(length(v)/n_folds); 
 
     for r = 1:n_reps
+		% randomly shuffle the entries of v
+        rv = v(randperm(length(v)));
 
-        % split A into n_folds number of folds. 
-        rv = v(randperm(length(v))));
-
+		% split A into n_folds number of folds
         for f = 1:n_folds - 1
             fold{f} = rv((f-1)*fold_size + 1 : f*fold_size);
         end
+		% store the remainder in the final entry
         fold{n_folds} = rv((n_folds - 1)* fold_size + 1 : end);
 
         % train and test the model n_folds number of times, cycling through 
-        % each of the folds being the test set
+        % each of the folds take the role of the test set
         for f = 1:n_folds
             test_i = row(fold{f});
             test_j = col(fold{f});
@@ -56,8 +57,11 @@ function [results] = cross_validate(A, n_reps, n_folds)
     end    
 end
 
+% test accuracy, this should be close to 1
+accuracy(A, A);
+
 A = readmatrix("matrix_a_sorted.csv");
-B(:,1) = [];
+A(:,1) = [];
 rA = cross_validate(A, 50, 5);
 fprintf("%.2f\n", mean(mean(rA)));
 
