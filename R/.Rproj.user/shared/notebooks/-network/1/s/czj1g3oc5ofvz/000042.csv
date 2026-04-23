@@ -10,5 +10,5 @@
 "0",""
 "0","arcplot(edges, las=2,font = 1, col.arcs = edge_color,"
 "0","        above = above_below(edges, edge_mask), ordering = ranked_names, horizontal = F,"
-"0","        lwd.arcs = 3, pch.nodes = 19, sorted = T, decreasing = F"
+"0","        lwd.arcs = 2, pch.nodes = 19, sorted = T, decreasing = F"
 "0","        ) "

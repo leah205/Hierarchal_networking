@@ -1,0 +1,4 @@
+"0","legend(""topright"","
+"0","       title = ""Dominant Node in Interaction"","
+"0","       legend = c(""Higher ranked"", ""Lower ranked""), col = c(rgb(0.75, 0.8, 1, 1), rgb(1, 0.25, 0.25, 1)),"
+"0","       lwd = 3)"
