@@ -1,7 +1,4 @@
-function [rA] = randomize_vector(A)
-    rA = A(randperm(length(A)));
-end
-
+% simplified version of sigma_a from the paper
 function [sigma] = accuracy(test_matrix, train_matrix)
     s = rank(train_matrix);
     n = length(s);
@@ -16,23 +13,24 @@ function [sigma] = accuracy(test_matrix, train_matrix)
     sigma = number_correct / sum(sum(test_matrix));
 end
 
-% return a matrix of correlations
+% returns a matrix with each trial's accuracy
 function [results] = cross_validate(A, n_reps, n_folds)
     if ~issparse(A)
         A = sparse(A);
     end
 
+	% initialize matrix of results
     results = zeros(n_reps, n_folds);
 
-    % row and column subscripts of each interaction, vector which contains
-    % the interactions
+    % row and column subscripts of each interaction
+	% and a vector containing each interaction
     [row, col, v] = find(triu(A + transpose(A)));
     fold_size = floor(length(v)/n_folds); 
 
     for r = 1:n_reps
 
         % split A into n_folds number of folds. 
-        rv = randomize_vector(v);
+        rv = v(randperm(length(v))));
 
         for f = 1:n_folds - 1
             fold{f} = rv((f-1)*fold_size + 1 : f*fold_size);
