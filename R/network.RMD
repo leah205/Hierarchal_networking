@@ -77,7 +77,11 @@ create_table(ranksA[1:floor(nrow(ranksA) / 2), ])
 create_table(ranksA[floor(nrow(ranksA) / 2 + 1):nrow(ranksA),])
 
 
+create_table(ranksB[1:floor(nrow(ranksB) / 2), ])
+create_table(ranksB[floor(nrow(ranksB) / 2 + 1):nrow(ranksB),])
 
+create_table(ranksC[1:floor(nrow(ranksC ) / 2), ])
+create_table(ranksC[floor(nrow(ranksC) / 2 + 1):nrow(ranksC),])
 ```
 
 
@@ -171,12 +175,12 @@ transp <- (0.2 + E(network)$weight / weight_factor)
 plot(network,
      layout = layout,
      vertex.label.cex = 0.7,
-     vertex.size = ifelse(demo_df$adult, 12, 8),
+     vertex.size = ifelse(demo_dfA$adult, 12, 8),
      edge.width = E(network)$weight / 10,
      edge.arrow.size = 0.2,
      vertex.border = 0,
      vertex.frame.width = 2,
-     vertex.color = ifelse(demo_df$male, "#DCDBFF", "#FFDBF6"),
+     vertex.color = ifelse(demo_dfA$male, "#DCDBFF", "#FFDBF6"),
     edge.color = rgb(0.3, 0.3, 0.3, transp))
 
 legend("bottomright",
