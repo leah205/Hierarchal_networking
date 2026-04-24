@@ -36,11 +36,12 @@ C = clean_input(C);
 %disp("total energy for time period 1")
 %disp("ranks for matrix A")
 %ranks = rank(A);
-[energy, p_val] = energy_test(A, ranks, 1000)
+
 %disp("Energy per edge Matrix A:")
 
 
 ranksA = rank(A);
+[energy, p_val] = energy_test(A, ranksA, 1000)
 [rASorted, Ind] = sort(ranksA, 'descend');
 size(rASorted, 1);
 ASorted = A(Ind, Ind);
