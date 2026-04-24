@@ -3,7 +3,7 @@
     "path": "//wsl.localhost/Ubuntu/home/leah205/Hierarchal_networking/R/network.RMD",
     "project_path": "network.RMD",
     "type": "r_markdown",
-    "hash": "72652149",
+    "hash": "0",
     "contents": "",
     "dirty": true,
     "created": 1776692409550.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "204,50",
-        "scrollLine": "195",
+        "cursorPosition": "30,11",
+        "scrollLine": "25",
         "last_setup_crc32": "a93dacffff761a0b"
     },
     "folds": "",
-    "lastKnownWriteTime": 1777039097,
+    "lastKnownWriteTime": 1777046660,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1777039327453,
+    "last_content_update": 1777047251703,
     "read_only": false,
     "read_only_alternatives": []
 }

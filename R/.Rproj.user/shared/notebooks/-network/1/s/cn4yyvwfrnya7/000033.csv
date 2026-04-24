@@ -1,2 +1,0 @@
-"0",""
-"0","create_table(ranksC[1:floor(nrow(ranksC ) / 2), ])"

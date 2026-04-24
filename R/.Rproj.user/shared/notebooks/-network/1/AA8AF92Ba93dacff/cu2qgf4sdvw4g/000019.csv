@@ -1,0 +1,4 @@
+"0",""
+"0","tableA <- C"
+"0","colnames(tableA)[1] <- ""Name"""
+"0","kable(tableA) %>% kable_styling()"
