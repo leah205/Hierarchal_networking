@@ -94,13 +94,13 @@ end
 % test accuracy, this should be close to 1
 accuracy(A, A);
 
-A = readmatrix("matrix_a_sorted.csv");
+A = readmatrix("../data/matrix_a_sorted.csv");
 A(:,1) = [];
-[A_simp, A_full] = cross_validate(A, 10, 5);
+[A_simp, A_full] = cross_validate(A, 50, 5);
 fprintf("Simplified accuracy for matrix A with 5 folds: %.4f \n", mean(A_simp));
 fprintf("Full accuracy for matrix A with 5 folds: %.4f \n", mean(A_full));
 
-%{
+% confirm that accuracy is lower with a lower fold size and higher with a higher fold size
 [A_simp, A_full] = cross_validate(A, 10, 2);
 fprintf("Simplified accuracy for matrix A with 2 folds: %.4f \n", mean(A_simp));
 fprintf("Full accuracy for matrix A with 2 folds: %.4f \n", mean(A_full));
@@ -109,64 +109,59 @@ fprintf("Full accuracy for matrix A with 2 folds: %.4f \n", mean(A_full));
 fprintf("Simplified accuracy for matrix A with 20 folds: %.4f \n", mean(A_simp));
 fprintf("Full accuracy for matrix A with 20 folds: %.4f \n", mean(A_full));
 
-%{
-scatter(A_simp, A_full)
-lsline
-title('Accuracy of A rankings')
-xlabel('Simplified \sigma_a')
-ylabel('\sigma_a')
-%}
-
-%{
-B = readmatrix("matrix_b_sorted.csv");
+B = readmatrix("../data/matrix_b_sorted.csv");
 B(:,1) = [];
 [B_simp, B_full] = cross_validate(B, 50, 5);
 fprintf("Average simplified accuracy for matrix B: %.4f \n", mean(B_simp));
 fprintf("Average full accuracy for matrix B: %.4f \n", mean(B_full));
 
+C = readmatrix("../data/matrix_c_sorted.csv");
+C(:,1) = [];
+[C_simp, C_full] = cross_validate(C, 50, 5);
+fprintf("Average simplified accuracy for matrix C: %.4f \n", mean(C_simp));
+fprintf("Average full accuracy for matrix C: %.4f \n", mean(C_full));
+
+% matrix of males at time period A
+mA = A;
+mA([5 7 10:15 17:18 20:22], :) = [];
+mA(:, [5 7 10:15 17:18 20:22]) = [];
+[mA_simp, ~] = cross_validate(mA, 50, 5);
+fprintf("Average accuracy for males at time period A: %.4f \n", mean(mA_simp));
+
+% matrix of females at time period A
+fA = A;
+fA([1:4 6 8:9 16 19], :) = [];
+fA(:, [1:4 6 8:9 16 19]) = [];
+[fA_simp, ~] = cross_validate(fA, 50, 5);
+fprintf("Average accuracy for females at time period A: %.4f \n", mean(fA_simp));
+
+% Use A as the training set to predict B
+% remove GS which is not in A and reorder
+B2 = readmatrix("../data/matrix_b_reordered.csv");
+B2(:,1) = [];
+rAB = accuracy_simp(B2, A);
+fprintf("%.4f\n", mean(mean(rAB)));
+
+% scatter plots 
 %{
+figure('Position',[200 200 800 500]);
+scatter(A_simp, A_full)
+lsline
+title('Accuracy of A rankings')
+xlabel('Simplified \sigma_a')
+ylabel('\sigma_a')
+
 figure('Position',[200 200 800 500]);
 scatter(B_simp, B_full)
 lsline
 title('Accuracy of B Rankings')
 xlabel('Simplified \sigma_a')
 ylabel('\sigma_a')
-%}
 
-C = readmatrix("matrix_c_sorted.csv");
-C(:,1) = [];
-[C_simp, C_full] = cross_validate(C, 50, 5);
-fprintf("Average simplified accuracy for matrix C: %.4f \n", mean(C_simp));
-fprintf("Average full accuracy for matrix C: %.4f \n", mean(C_full));
-
-%{
 figure('Position',[200 200 800 500]);
 scatter(C_simp, C_full)
 lsline
 title('Accuracy of C Rankings')
 xlabel('Simplified \sigma_a')
 ylabel('\sigma_a')
-%}
-
-% matrix of males at time period A
-mA = A;
-mA([5 7 10:15 17:18 20:22], :) = [];
-mA(:, [5 7 10:15 17:18 20:22]) = [];
-rmA = cross_validate(mA, 10, 5);
-fprintf("%.4f\n", mean(mean(rmA)));
-
-% matrix of females at time period A
-fA = A;
-fA([1:4 6 8:9 16 19], :) = [];
-fA(:, [1:4 6 8:9 16 19]) = [];
-rfA = cross_validate(fA, 10, 5);
-fprintf("%.4f\n", mean(mean(rfA)));
-
-% remove GS which is not in A and reorder
-B2 = readmatrix("matrix_b_reordered.csv");
-B2(:,1) = [];
-rAB = accuracy_simp(B2, A);
-fprintf("%.4f\n", mean(mean(rAB)));
-
-%}
 %}
