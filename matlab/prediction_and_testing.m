@@ -29,14 +29,14 @@ function [results] = cross_validate(A, n_reps, n_folds)
 
     for r = 1:n_reps
 		% randomly shuffle the entries of v
-        rv = v(randperm(length(v)));
+        indices = randperm(length(v));
 
 		% split A into n_folds number of folds
         for f = 1:n_folds - 1
-            fold{f} = rv((f-1)*fold_size + 1 : f*fold_size);
+            fold{f} = indices((f-1)*fold_size + 1 : f*fold_size);
         end
 		% store the remainder in the final entry
-        fold{n_folds} = rv((n_folds - 1)* fold_size + 1 : end);
+        fold{n_folds} = indices((n_folds - 1)* fold_size + 1 : end);
 
         % train and test the model n_folds number of times, cycling through 
         % each of the folds take the role of the test set
