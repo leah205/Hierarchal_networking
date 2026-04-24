@@ -13,8 +13,11 @@ function [ranks] = springRank(m)
     %right hand side of system
     b = out_deg - in_deg;
 
-    % solve system for ranks
+    % solve system for ranks with least squares solution
     ranks = lsqminnorm(B, b);
+
+
+    %shifts ranks to have zero mean
     ranks = ranks - mean(ranks);
 end
 

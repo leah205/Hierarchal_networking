@@ -36,7 +36,7 @@ function [random] = generate_randomized(m)
     end
 end
 
-% find average energies for n randomized network graphs
+% find average energies for a distribution of 
 function [avg_random_energy_per_edge, random_energies] = get_random_energies(m, n)
     random_energies = []
     sum_energies = 0;
@@ -56,9 +56,11 @@ function [avg_random_energy_per_edge, random_energies] = get_random_energies(m, 
     disp(sum_tot_energies / n);
 end
 
+%A(i, j) has # of fearful signals from j when interacting with i
+%( A(i, j) -> i dominates j
 
 function [energy] = get_tot_energy(ranks, m)
-H = zeros(size(m, 1));    
+H = zeros(size(m, 1)); % Initialize the H matrix    
 %create H matrix storing energy of each spring
     for(i = 1:size(m, 1))
         for(j = 1:size(m, 1))
@@ -67,7 +69,7 @@ H = zeros(size(m, 1));
     end
     energy = 0;
 
-    %adds up spring energies to find total energy in network
+    %adds up spring energies to find total energy
     for(i = 1:size(m, 1))
         for(j = 1:size(m, 1))
             energy = energy + H(i, j) * m(i, j);
