@@ -1,3 +1,5 @@
+"0",""
+"0","# ranks table function"
 "0","create_table <- function(df){"
 "0","  ranksTableA <- df"
 "0","  ranksTableA$ranks <- round(ranksTableA$ranks, 3)"

@@ -199,11 +199,11 @@ legend("topright",
 
 # create data frame with edge list and weight
 edges <- get.edgelist(network)
-View(edges)
 edge_df <- as.data.frame(edges)
-edge_df$ind1 = match(edge_df$V1, colnames(A))
-edge_df$ind2 = match(edge_df$V2, colnames(A))
-elist <- Mtrx_EList(A, directed = T)
+
+edge_df$ind1 = match(edge_df$V1, colnames(A[,-1]))
+edge_df$ind2 = match(edge_df$V2, colnames(A[,-1]))
+ elist <- Mtrx_EList(A[, -1], directed = T)
 weighted_edges = merge(edge_df, elist, by.y = c("n1", "n2"), by.x = c("ind1", "ind2"))
 weighted_edges$weight <- as.integer(weighted_edges$weight)
 
@@ -214,9 +214,14 @@ weighted_edges$weight <- as.integer(weighted_edges$weight)
 
 #plot arcdiagram
 edge_mask <- which(weighted_edges$ind1 < weighted_edges$ind2)
+winning_df <- weighted_edges %>% filter(
+  ind1 < ind2
+)
+print(sum(winning_df$weight))
+print(sum(weighted_edges$weight))
+
 weight_factor = max(weighted_edges$weight) / 0.8
 transp <- (0.2 + weighted_edges$weight / weight_factor)
-View(weighted_edges)
 edges <- as.matrix(weighted_edges[,3:4])
 
 edge_color <- ifelse(weighted_edges$ind1 < weighted_edges$ind2, rgb(0.75, 0.8, 1, transp), rgb(1, 0.25, 0.25, transp))

@@ -9,7 +9,7 @@
 "0","ranksCDemo = merge(ranksC, demo_dfC, by.y = ""name"", by.x = ""Var1"" )"
 "0","all_ranks = rbind(ranksADemo, ranksBDemo, ranksCDemo)"
 "0",""
-"0",""
+"0","#rank bump chart"
 "0","transition_points <- all_ranks %>%"
 "0","  group_by(Var1) %>%"
 "0","  filter(adult & !lag(adult))"
