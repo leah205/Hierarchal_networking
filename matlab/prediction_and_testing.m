@@ -1,6 +1,7 @@
 % simplified version of sigma_a from the paper
 function [sigma] = accuracy(test_matrix, train_matrix)
     s = rank(train_matrix);
+    % s = s(randperm(length(s))); % can be used for evaluating statistical significance of rank()
     n = length(s);
     number_correct = 0; % the number of edge directions correctly predicted
     for i = 1 : n
@@ -13,14 +14,46 @@ function [sigma] = accuracy(test_matrix, train_matrix)
     sigma = number_correct / sum(sum(test_matrix));
 end
 
-% returns a matrix with each trial's accuracy
-function [results] = cross_validate(A, n_reps, n_folds)
+% full version of sigma_a from the paper
+function [sigma] = accuracy_full(test_matrix, train_matrix)
+    s = rank(train_matrix);
+    n = length(s);
+    
+    function [a] = negacc(b)
+        t = sum(sum(train_matrix));
+        y = 0;
+        for i = 1:n
+            for j = 1:n
+                p = (1 + exp(-2*b*(s(i)-s(j))))^(-1);
+                y = y + abs(train_matrix(i, j) - (train_matrix(i,j) + ...
+                    train_matrix(j, i))*p);
+            end
+        end
+        a = y/t - 1;
+    end
+
+    b = fminbnd(@negacc, 1e-6, 1000);
+    
+    t = sum(sum(test_matrix));
+    y = 0;
+    for i_ = 1:n
+        for j_ = 1:n
+            p = (1 + exp(-2*b*(s(i_)-s(j_))))^(-1);
+            y = y + abs(test_matrix(i_,j_) - (test_matrix(i_,j_) + test_matrix(j_,i_))*p);
+        end     
+    end
+    sigma = 1 - 0.5*y/t;
+end
+
+% returns two arrays with each trial's accuracy
+function [sigma_s, sigma_f] = cross_validate(A, n_reps, n_folds)
     if ~issparse(A)
         A = sparse(A);
     end
 
-	% initialize matrix of results
-    results = zeros(n_reps, n_folds);
+	% initialize arrays of results
+    sigma_s = zeros(n_reps*n_folds, 1);
+    sigma_f = zeros(n_reps*n_folds, 1);
 
     % row and column subscripts of each interaction
 	% and a vector v containing each interaction
@@ -28,18 +61,18 @@ function [results] = cross_validate(A, n_reps, n_folds)
     fold_size = floor(length(v)/n_folds); 
 
     for r = 1:n_reps
-		% randomly shuffle the entries of v
+		% randomly shuffle the indices of the entries of v
         indices = randperm(length(v));
 
-		% split A into n_folds number of folds
+        % split A into n_folds number of folds. 
         for f = 1:n_folds - 1
             fold{f} = indices((f-1)*fold_size + 1 : f*fold_size);
         end
-		% store the remainder in the final entry
+        %  store the remainder in the final entry
         fold{n_folds} = indices((n_folds - 1)* fold_size + 1 : end);
 
         % train and test the model n_folds number of times, cycling through 
-        % each of the folds take the role of the test set
+        % each of the folds taking the role of the test set
         for f = 1:n_folds
             test_i = row(fold{f});
             test_j = col(fold{f});
@@ -52,7 +85,8 @@ function [results] = cross_validate(A, n_reps, n_folds)
 
             test_matrix = A - train_matrix;
 
-            results(r,f) = accuracy(test_matrix, train_matrix);
+            sigma_s((r-1)*n_folds + f,1) = accuracy_simp(test_matrix, train_matrix);
+            sigma_f((r-1)*n_folds + f,1) = accuracy_full(test_matrix, train_matrix);
         end    
     end    
 end
@@ -62,15 +96,77 @@ accuracy(A, A);
 
 A = readmatrix("matrix_a_sorted.csv");
 A(:,1) = [];
-rA = cross_validate(A, 50, 5);
-fprintf("%.2f\n", mean(mean(rA)));
+[A_simp, A_full] = cross_validate(A, 10, 5);
+fprintf("Simplified accuracy for matrix A with 5 folds: %.4f \n", mean(A_simp));
+fprintf("Full accuracy for matrix A with 5 folds: %.4f \n", mean(A_full));
 
+%{
+[A_simp, A_full] = cross_validate(A, 10, 2);
+fprintf("Simplified accuracy for matrix A with 2 folds: %.4f \n", mean(A_simp));
+fprintf("Full accuracy for matrix A with 2 folds: %.4f \n", mean(A_full));
+
+[A_simp, A_full] = cross_validate(A, 10, 20);
+fprintf("Simplified accuracy for matrix A with 20 folds: %.4f \n", mean(A_simp));
+fprintf("Full accuracy for matrix A with 20 folds: %.4f \n", mean(A_full));
+
+%{
+scatter(A_simp, A_full)
+lsline
+title('Accuracy of A rankings')
+xlabel('Simplified \sigma_a')
+ylabel('\sigma_a')
+%}
+
+%{
 B = readmatrix("matrix_b_sorted.csv");
 B(:,1) = [];
-rB = cross_validate(B, 50, 5);
-fprintf("%.2f\n", mean(mean(rB)));
+[B_simp, B_full] = cross_validate(B, 50, 5);
+fprintf("Average simplified accuracy for matrix B: %.4f \n", mean(B_simp));
+fprintf("Average full accuracy for matrix B: %.4f \n", mean(B_full));
+
+%{
+figure('Position',[200 200 800 500]);
+scatter(B_simp, B_full)
+lsline
+title('Accuracy of B Rankings')
+xlabel('Simplified \sigma_a')
+ylabel('\sigma_a')
+%}
 
 C = readmatrix("matrix_c_sorted.csv");
 C(:,1) = [];
-rC = cross_validate(C, 50, 5);
-fprintf("%.2f\n", mean(mean(rC)));
+[C_simp, C_full] = cross_validate(C, 50, 5);
+fprintf("Average simplified accuracy for matrix C: %.4f \n", mean(C_simp));
+fprintf("Average full accuracy for matrix C: %.4f \n", mean(C_full));
+
+%{
+figure('Position',[200 200 800 500]);
+scatter(C_simp, C_full)
+lsline
+title('Accuracy of C Rankings')
+xlabel('Simplified \sigma_a')
+ylabel('\sigma_a')
+%}
+
+% matrix of males at time period A
+mA = A;
+mA([5 7 10:15 17:18 20:22], :) = [];
+mA(:, [5 7 10:15 17:18 20:22]) = [];
+rmA = cross_validate(mA, 10, 5);
+fprintf("%.4f\n", mean(mean(rmA)));
+
+% matrix of females at time period A
+fA = A;
+fA([1:4 6 8:9 16 19], :) = [];
+fA(:, [1:4 6 8:9 16 19]) = [];
+rfA = cross_validate(fA, 10, 5);
+fprintf("%.4f\n", mean(mean(rfA)));
+
+% remove GS which is not in A and reorder
+B2 = readmatrix("matrix_b_reordered.csv");
+B2(:,1) = [];
+rAB = accuracy_simp(B2, A);
+fprintf("%.4f\n", mean(mean(rAB)));
+
+%}
+%}
