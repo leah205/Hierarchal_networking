@@ -1,5 +1,5 @@
 % simplified version of sigma_a from the paper
-function [sigma] = accuracy(test_matrix, train_matrix)
+function [sigma] = accuracy_simp(test_matrix, train_matrix)
     s = rank(train_matrix);
     % s = s(randperm(length(s))); % can be used for evaluating statistical significance of rank()
     n = length(s);
@@ -12,6 +12,25 @@ function [sigma] = accuracy(test_matrix, train_matrix)
         end     
     end
     sigma = number_correct / sum(sum(test_matrix));
+end
+
+function [upset_rate] = upset(A, s) 
+    total_interactions = 0;
+    upsets = 0;
+    n = length(s);
+
+    for i = 1:n
+        for j = 1:n
+            if A(i,j) > 0  % interactions where i dominated j
+                if s(i) < s(j)  % i is lower ranked than j
+                    upsets = upsets + A(i,j);
+                end
+                total_interactions = total_interactions + A(i,j);
+            end
+        end
+    end
+    
+    upset_rate = upsets / total_interactions;
 end
 
 % full version of sigma_a from the paper
@@ -91,14 +110,15 @@ function [sigma_s, sigma_f] = cross_validate(A, n_reps, n_folds)
     end    
 end
 
-% test accuracy, this should be close to 1
-accuracy(A, A);
 
 A = readmatrix("../data/matrix_a_sorted.csv");
 A(:,1) = [];
 [A_simp, A_full] = cross_validate(A, 50, 5);
 fprintf("Simplified accuracy for matrix A with 5 folds: %.4f \n", mean(A_simp));
 fprintf("Full accuracy for matrix A with 5 folds: %.4f \n", mean(A_full));
+
+% test accuracy, this should be close to 1
+accuracy(A, A);
 
 % confirm that accuracy is lower with a lower fold size and higher with a higher fold size
 [A_simp, A_full] = cross_validate(A, 10, 2);
@@ -135,6 +155,43 @@ fA(:, [1:4 6 8:9 16 19]) = [];
 [fA_simp, ~] = cross_validate(fA, 50, 5);
 fprintf("Average accuracy for females at time period A: %.4f \n", mean(fA_simp));
 
+
+s = rank(A);
+s([5 7 10:15 17:18 20:22], :) = [];
+sM = rank(mA);
+[rM, pM] = corr(sM,s,"Type", "Spearman");
+
+%{
+figure('Position',[200 200 800 500]);
+scatter(sM, s)
+xlabel("Male-only Rank")
+ylabel("Full Rank")
+title("Correlation of Male Ranks")
+lsline()
+%}
+
+s = rank(A);
+s([1:4 6 8:9 16 19], :) = [];
+sF = rank(fA);
+[rF, pF] = corr(sF,s,"Type", "Spearman");
+
+%{
+figure('Position',[200 200 800 500]);
+scatter(sF, s)
+xlabel("Female-only Rank")
+ylabel("Full Rank")
+title("Correlation of Female Ranks")
+lsline()
+%}
+
+fprintf("Correlation between male-only hierarchy ranks and full hierarchy ranks is %.4f with a p-value of %.4f\n",rM,pM);
+fprintf("Correlation between female-only hierarchy ranks and full hierarchy ranks is %.4f with a p-value of %.4f\n",rF,pF);
+
+fprintf("Upset rate among males: %.4f\n", upset(mA, sM));
+fprintf("Upset rate among females: %.4f\n", upset(fA, sF));
+fprintf("Total upset rate: %.4f\n", upset(A, rank(A)));
+
+
 % Use A as the training set to predict B
 % remove GS which is not in A and reorder
 B2 = readmatrix("../data/matrix_b_reordered.csv");
@@ -142,8 +199,9 @@ B2(:,1) = [];
 rAB = accuracy_simp(B2, A);
 fprintf("%.4f\n", mean(mean(rAB)));
 
-% scatter plots 
 %{
+% scatter plots 
+
 figure('Position',[200 200 800 500]);
 scatter(A_simp, A_full)
 lsline
