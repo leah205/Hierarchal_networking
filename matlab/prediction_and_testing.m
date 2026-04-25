@@ -14,25 +14,6 @@ function [sigma] = accuracy_simp(test_matrix, train_matrix)
     sigma = number_correct / sum(sum(test_matrix));
 end
 
-function [upset_rate] = upset(A, s) 
-    total_interactions = 0;
-    upsets = 0;
-    n = length(s);
-
-    for i = 1:n
-        for j = 1:n
-            if A(i,j) > 0  % interactions where i dominated j
-                if s(i) < s(j)  % i is lower ranked than j
-                    upsets = upsets + A(i,j);
-                end
-                total_interactions = total_interactions + A(i,j);
-            end
-        end
-    end
-    
-    upset_rate = upsets / total_interactions;
-end
-
 % full version of sigma_a from the paper
 function [sigma] = accuracy_full(test_matrix, train_matrix)
     s = rank(train_matrix);
@@ -108,6 +89,25 @@ function [sigma_s, sigma_f] = cross_validate(A, n_reps, n_folds)
             sigma_f((r-1)*n_folds + f,1) = accuracy_full(test_matrix, train_matrix);
         end    
     end    
+end
+
+function [upset_rate] = upset(A, s) 
+    total_interactions = 0;
+    upsets = 0;
+    n = length(s);
+
+    for i = 1:n
+        for j = 1:n
+            if A(i,j) > 0  % interactions where i dominated j
+                if s(i) < s(j)  % i is lower ranked than j
+                    upsets = upsets + A(i,j);
+                end
+                total_interactions = total_interactions + A(i,j);
+            end
+        end
+    end
+    
+    upset_rate = upsets / total_interactions;
 end
 
 
